@@ -3,6 +3,8 @@ import Employee_single from "./employee"
 import {Row,Col,Container,ListGroup,Form,Button} from "react-bootstrap"
 
 const API_URL = "http://localhost:4000"
+const Starting_Bees = 1;
+
 
 function Employee_list({ heading }) {
     const [Employees, setItems] = React.useState([]);
@@ -17,7 +19,7 @@ function Employee_list({ heading }) {
     function handleAdd(event){
         event.preventDefault();
         const name = event.target.elements.name.value;
-        const counter = event.target.elements.counter.value;
+        const counter = Starting_Bees;
         fetch(`${API_URL}/Employees`,{
             method:"POST",
             headers:{
@@ -32,6 +34,19 @@ function Employee_list({ heading }) {
         ).catch((error)=>console.log(error));
     }
     
+    function handle_plus_bee(index){
+        fetch(`${API_URL}/Employees/${index}`,{
+            method:"PATCH",
+            headers:{
+                Accept:"application/json",
+            },
+        })
+        .then((response)=>
+        response.json().then((Employees)=>setItems(Employees))
+        )
+            .catch((error)=>console.log(error));
+    }
+
     function handleDelete(index) {
         fetch(`${API_URL}/Employees/${index}`,{
             method:"DELETE",
@@ -57,6 +72,7 @@ function Employee_list({ heading }) {
             name={employee.name}
             counter={employee.counter}
             onDelete={() => handleDelete(index)}
+            onadd={()=> handle_plus_bee()}
             />
         ))}      
             </ListGroup>    
@@ -68,11 +84,7 @@ function Employee_list({ heading }) {
         <Form.Control type="text" id ="name"/>
         </Form.Group>
         <br />
-        <Form.Group className="mb-3">
-        <Form.Label htmlFor='counter'>Count:</Form.Label>
-        <Form.Control id="counter" as="textarea"/>
-        </Form.Group>
-        <br />
+
         <Button type="Add">Add employee</Button> 
     </Form>
     </Col>

@@ -8,9 +8,9 @@ function App(){
     return (
     <div id="content">
         <Container> 
+        <link href="./public/favicon.ico" rel="icon" type="image/x-icon"/>
         <Employee_list heading="Bee-Ranking"/>
         </Container>
     </div>);
-}
- 
+} 
 export default App;
