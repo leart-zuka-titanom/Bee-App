@@ -42,7 +42,7 @@ app.delete("/Employees/:Employee_id",(req,res)=>{
 app.patch("/Employees/:Employee_id", (req ,res )=>{
     const Employee_id = req.params.Employee_id; // = undefined
     console.log(Employee_id); // undefined
-    Employees[0].counter += 1; //Hier sollte eig. statt der 0 die jeweilige id des Mitarbeiters stehen
+    Employees[Employee_id].counter += 1; //Hier sollte eig. statt der 0 die jeweilige id des Mitarbeiters stehen
     res.send(Employees);
 })
 

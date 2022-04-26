@@ -41,11 +41,25 @@ function Employee_list({ heading }) {
                 Accept:"application/json",
             },
         })
+            .then((response)=>
+                response.json().then((Employees)=>setItems(Employees))
+            )
+            .catch((error)=>console.log(error));
+    }
+
+
+    /*{
+        fetch(`${API_URL}/Employees/${index}`,{
+            method:"PATCH",
+            headers:{
+                Accept:"application/json",
+            },
+        })
         .then((response)=>
         response.json().then((Employees)=>setItems(Employees))
         )
             .catch((error)=>console.log(error));
-    }
+    }*/
 
     function handleDelete(index) {
         fetch(`${API_URL}/Employees/${index}`,{
@@ -72,7 +86,7 @@ function Employee_list({ heading }) {
             name={employee.name}
             counter={employee.counter}
             onDelete={() => handleDelete(index)}
-            onadd={()=> handle_plus_bee()}
+            onAdd={()=> handle_plus_bee(index)}
             />
         ))}      
             </ListGroup>    
@@ -84,7 +98,6 @@ function Employee_list({ heading }) {
         <Form.Control type="text" id ="name"/>
         </Form.Group>
         <br />
-
         <Button type="Add">Add employee</Button> 
     </Form>
     </Col>
