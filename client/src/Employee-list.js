@@ -3,7 +3,7 @@ import Employee_single from "./employee"
 import {Row,Col,Container,ListGroup,Form,Button} from "react-bootstrap"
 
 const API_URL = "http://localhost:4000"
-const Starting_Bees = 1;
+const Starting_Bees = 0;
 
 
 function Employee_list({ heading }) {
@@ -46,20 +46,6 @@ function Employee_list({ heading }) {
             )
             .catch((error)=>console.log(error));
     }
-
-
-    /*{
-        fetch(`${API_URL}/Employees/${index}`,{
-            method:"PATCH",
-            headers:{
-                Accept:"application/json",
-            },
-        })
-        .then((response)=>
-        response.json().then((Employees)=>setItems(Employees))
-        )
-            .catch((error)=>console.log(error));
-    }*/
 
     function handleDelete(index) {
         fetch(`${API_URL}/Employees/${index}`,{
