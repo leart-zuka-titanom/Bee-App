@@ -1,51 +1,79 @@
 const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+
 const app = express();
 const port = 4000;
-const cors = require("cors");
 
 app.use(cors());
 app.use(express.json());
 
-const Employees = []
 
-app.get("/Employees", (req,res) => {
-    res.send(Employees);
+
+const DB_URL = "mongodb://localhost:27017/employees";
+const connectDb = () => {
+    return mongoose.connect(DB_URL);
+};
+
+const Employee_scheme = new mongoose.Schema({
+    id: Number,
+    name: String,
+    counter: Number
 });
 
-app.get("/Employees/:Employee_id", (req,res)=>{
-    const id = req.params.Employee_id
-    if (id < Employees.length){
-        res.send(Employees[id]);
+const Employee_model = mongoose.model("Employee", Employee_scheme);
 
-    }
-    else{
-        res.status(400).send({
-            error: `Employee with ID ${id} does not exist`,
+
+const convertEmployees = (mongoEmployees) => mongoEmployees.map((mongoEmployee) => ({
+    id: mongoEmployee._id,
+    name: mongoEmployee.name,
+    counter: mongoEmployee.counter,
+}));
+
+app.get("/Employees",async(req,res) =>{
+    const Employee_list = await Employee_model.find();
+    res.send(convertEmployees(Employee_list));
+});
+
+app.get("/Employees/:Employee_id", async (req,res)=>{
+    const Employee_id = req.params.Employee_id;
+    const Employee_single = await Employee_model.find({id: Employee_id});
+    res.send(Employee_single);
+})
+
+app.post("/Employees",async (req,res)=>{
+    const name = req.body.name;
+    const counter = req.body.counter;
+
+    const Employee_single = new Employee_model({
+        name,
+        counter
+    });
+    await Employee_single.save();
+    const Employee_list = await Employee_model.find();
+    res.send(convertEmployees(Employee_list));
+});
+
+app.delete("/Employees/:Employee_id",async (req,res)=>{
+    const Employee_id = req.params.Employee_id;
+    Employee_list = await Employee_model.find();
+    await Employee_model.deleteOne({_id: Employee_list[Employee_id]._id})
+    const Employee_list_new = await Employee_model.find();
+    res.send(convertEmployees(Employee_list_new));
+});
+
+app.patch("/Employees/:Employee_id", async (req,res)=>{
+    const Employee_id = req.params.Employee_id;
+    Employee_list = await Employee_model.find();
+    await Employee_model.updateOne({_id:Employee_list[Employee_id]._id },{$set:{counter: Employee_list[Employee_id].counter +1}});
+    const Employee_list_new = await Employee_model.find();
+    res.send(convertEmployees(Employee_list_new));
+})
+
+connectDb()
+    .then(async () => {
+        await app.listen(port, () => {
+            console.log(`App listening on port ${port}`);
         });
-    }
-})
-
-app.post("/Employees", (req,res) => {
-    const Employee_single = req.body;
-    Employees.push(Employee_single);
-    res.send(Employees);
-
-})
-
-app.delete("/Employees/:Employee_id",(req,res)=>{
-    const id = req.params.Employee_id;
-    console.log(id)
-    Employees.splice(id,1);
-    res.send(Employees);
-})
-
-app.patch("/Employees/:Employee_id", (req ,res )=>{
-    const Employee_id = req.params.Employee_id; // = undefined
-    console.log(Employee_id); // undefined
-    Employees[Employee_id].counter += 1; //Hier sollte eig. statt der 0 die jeweilige id des Mitarbeiters stehen
-    res.send(Employees);
-})
-
-app.listen(port,() => {
-    console.log(`Server is listening on port ${port}`)
-})
+    })
+    .catch((err) => console.log(err));

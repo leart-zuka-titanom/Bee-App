@@ -1,5 +1,5 @@
-import React from "react";
-import Employee_single from "./employee"
+import * as React from "react";
+import Employee_single_create from "./employee"
 import {Row,Col,Container,ListGroup,Form,Button} from "react-bootstrap"
 
 const API_URL = "http://localhost:4000"
@@ -30,7 +30,7 @@ function Employee_list({ heading }) {
                 name,
                 counter
             }),
-        }).then((response) => response.json().then((Employees) => setItems(Employees)) 
+        }).then((response) => response.json().then((Employees) => setItems(Employees))
         ).catch((error)=>console.log(error));
     }
     
@@ -66,13 +66,14 @@ function Employee_list({ heading }) {
     <Row>    
          <Col>
             <ListGroup id="Employee_list" variant="flush">
-            {Employees.map((employee,index)=> (
-            <Employee_single 
-            key={index} 
+            {Employees.map((employee,id)=> (
+            <Employee_single_create
+            key={id}
+            id = {id}
             name={employee.name}
             counter={employee.counter}
-            onDelete={() => handleDelete(index)}
-            onAdd={()=> handle_plus_bee(index)}
+            onDelete={() => handleDelete(id)}
+            onAdd={()=> handle_plus_bee(id)}
             />
         ))}      
             </ListGroup>    
@@ -83,7 +84,7 @@ function Employee_list({ heading }) {
         <Form.Label htmlFor="name">Name:</Form.Label>
         <Form.Control type="text" id ="name"/>
         </Form.Group>
-        <br />
+
         <Button type="Add">Add employee</Button> 
     </Form>
     </Col>
